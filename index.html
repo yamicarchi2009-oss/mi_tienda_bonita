@@ -636,6 +636,126 @@
         .contact-detail-item h5 { font-size: 14px; margin-bottom: 3px; }
         .contact-detail-item p { font-size: 13px; color: var(--text-gray); }
 
+        /* --- Modal de compra (checkout simulado) --- */
+        .checkout-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .checkout-overlay.show {
+            display: flex;
+        }
+        .checkout-modal {
+            background: #fff;
+            width: 460px;
+            max-width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            animation: modalPop 0.25s ease;
+        }
+        @keyframes modalPop {
+            from { transform: scale(0.92); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .checkout-close {
+            position: absolute;
+            top: 16px;
+            right: 18px;
+            font-size: 20px;
+            color: var(--text-gray);
+            cursor: pointer;
+        }
+        .checkout-close:hover { color: #000; }
+        .checkout-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+            padding-bottom: 18px;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+        .checkout-header img {
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+        .checkout-header h3 { font-size: 17px; margin-bottom: 4px; }
+        .checkout-header .checkout-price { font-size: 16px; font-weight: 700; color: #ff3377; }
+        .checkout-demo-note {
+            background-color: var(--yellow-light);
+            border: 1px solid #ffe08a;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            color: #7a5c00;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .checkout-row {
+            display: flex;
+            gap: 14px;
+        }
+        .checkout-row .form-group { flex: 1; }
+        .card-icons {
+            display: flex;
+            gap: 8px;
+            font-size: 20px;
+            color: var(--text-gray);
+            margin-top: 6px;
+        }
+        .checkout-total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            margin-bottom: 12px;
+            border-top: 1px dashed #e0e0e0;
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .checkout-pay-btn {
+            background-color: var(--pink-btn);
+            border: 1px solid #ff99cc;
+            padding: 13px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .checkout-pay-btn:hover { background-color: #ff99cc; }
+        .checkout-success {
+            display: none;
+            text-align: center;
+            padding: 20px 0;
+        }
+        .checkout-success.show { display: block; }
+        .checkout-success i {
+            font-size: 55px;
+            color: #4caf82;
+            margin-bottom: 15px;
+        }
+        .checkout-success h3 { font-size: 19px; margin-bottom: 8px; }
+        .checkout-success p { color: var(--text-gray); font-size: 14px; margin-bottom: 20px; }
+        .checkout-form-body { display: block; }
+        .checkout-form-body.hidden { display: none; }
+
         @media (max-width: 900px) {
             .inner-page { padding: 40px 30px; }
         }
@@ -646,6 +766,8 @@
             .countdown { justify-content: center; }
             .about-section, .about-section.reverse { flex-direction: column; }
             .about-img img { height: 220px; }
+            .checkout-modal { padding: 22px; }
+            .checkout-row { flex-direction: column; gap: 0; }
         }
 
         /* =====================================================
@@ -786,7 +908,7 @@
             <div class="hero-left">
                 <h2>Bienvenido a MiTienda <i class="fa-regular fa-heart"></i></h2>
                 <p>Encuentra productos de calidad<br>al mejor precio.</p>
-                <button>Comprar ahora</button>
+                <button onclick="showPage('productos')">Comprar ahora</button>
             </div>
             <div class="hero-right">
                 <i class="fa-solid fa-tags"></i>
@@ -1049,6 +1171,76 @@
 
     <div class="cart-toast" id="cartToast"></div>
 
+    <!-- MODAL DE COMPRA (CHECKOUT SIMULADO) -->
+    <div class="checkout-overlay" id="checkoutOverlay" onclick="closeCheckoutOnOverlay(event)">
+        <div class="checkout-modal">
+            <i class="fa-solid fa-xmark checkout-close" onclick="closeCheckout()"></i>
+
+            <!-- Vista: formulario de pago -->
+            <div id="checkoutFormBody" class="checkout-form-body">
+                <div class="checkout-header">
+                    <img id="checkoutImg" src="" alt="Producto">
+                    <div>
+                        <h3 id="checkoutName">Producto</h3>
+                        <div class="checkout-price" id="checkoutPrice">$0.00</div>
+                    </div>
+                </div>
+
+                <div class="checkout-demo-note">
+                    <i class="fa-solid fa-circle-info"></i>
+                    Esto es una demo. No se realizará ningún cobro real ni se almacenan los datos.
+                </div>
+
+                <form id="checkoutForm" onsubmit="return handlePaymentSubmit(event)">
+                    <div class="form-group">
+                        <label for="ck-name">Nombre en la tarjeta</label>
+                        <input type="text" id="ck-name" required placeholder="Ej. María Pérez">
+                    </div>
+                    <div class="form-group">
+                        <label for="ck-card">Número de tarjeta</label>
+                        <input type="text" id="ck-card" required placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric" oninput="formatCardNumber(this)">
+                        <div class="card-icons">
+                            <i class="fa-brands fa-cc-visa"></i>
+                            <i class="fa-brands fa-cc-mastercard"></i>
+                            <i class="fa-brands fa-cc-amex"></i>
+                        </div>
+                    </div>
+                    <div class="checkout-row">
+                        <div class="form-group">
+                            <label for="ck-exp">Vencimiento</label>
+                            <input type="text" id="ck-exp" required placeholder="MM/AA" maxlength="5" oninput="formatExpiry(this)">
+                        </div>
+                        <div class="form-group">
+                            <label for="ck-cvv">CVV</label>
+                            <input type="text" id="ck-cvv" required placeholder="123" maxlength="4" inputmode="numeric">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ck-address">Dirección de envío</label>
+                        <input type="text" id="ck-address" required placeholder="Calle, número, ciudad">
+                    </div>
+
+                    <div class="checkout-total-row">
+                        <span>Total a pagar</span>
+                        <span id="checkoutTotal">$0.00</span>
+                    </div>
+
+                    <button type="submit" class="checkout-pay-btn">
+                        <i class="fa-solid fa-lock"></i> Pagar ahora
+                    </button>
+                </form>
+            </div>
+
+            <!-- Vista: confirmación -->
+            <div id="checkoutSuccess" class="checkout-success">
+                <i class="fa-solid fa-circle-check"></i>
+                <h3>¡Compra realizada!</h3>
+                <p id="checkoutSuccessText">Tu pedido fue procesado correctamente (demo).</p>
+                <button type="button" class="checkout-pay-btn" onclick="closeCheckout()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <footer>
         <div class="footer">
@@ -1146,8 +1338,6 @@
             { id: 16, name: 'Cinturón de cuero', cat: 'accesorios', catLabel: 'Accesorios', price: 19.90, oldPrice: null, img: 'https://loremflickr.com/400/300/leather,belt?lock=16' },
         ];
 
-        let cartCount = 0;
-
         function formatPrice(n) {
             return '$' + n.toFixed(2);
         }
@@ -1170,8 +1360,8 @@
                             <span class="price-now">${formatPrice(p.price)}</span>
                             ${oldPriceHtml}
                         </div>
-                        <button class="add-cart-btn" onclick="addToCart(${p.id}, this)">
-                            <i class="fa-solid fa-cart-plus"></i> Agregar al carrito
+                        <button class="add-cart-btn" onclick="openCheckout(${p.id})">
+                            <i class="fa-solid fa-credit-card"></i> Comprar
                         </button>
                     </div>
                 </div>
@@ -1243,32 +1433,69 @@
             }
 
             startCountdown();
+
+            // Cerrar modal con tecla Escape
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeCheckout();
+            });
         });
 
-        /* --- Carrito --- */
-        function addToCart(id, btnEl) {
-            cartCount++;
-            const badge = document.getElementById('cartBadge');
-            if (badge) badge.textContent = cartCount;
+        /* --- Checkout simulado --- */
+        let currentCheckoutProduct = null;
 
-            const original = btnEl.innerHTML;
-            btnEl.innerHTML = '<i class="fa-solid fa-check"></i> Agregado';
-            btnEl.classList.add('added');
-            setTimeout(() => {
-                btnEl.innerHTML = original;
-                btnEl.classList.remove('added');
-            }, 1200);
-
+        function openCheckout(id) {
             const product = PRODUCTS.find(p => p.id === id);
-            showCartToast(`"${product.name}" se agregó al carrito`);
+            if (!product) return;
+            currentCheckoutProduct = product;
+
+            document.getElementById('checkoutImg').src = product.img;
+            document.getElementById('checkoutName').textContent = product.name;
+            document.getElementById('checkoutPrice').textContent = formatPrice(product.price);
+            document.getElementById('checkoutTotal').textContent = formatPrice(product.price);
+
+            // Reiniciar formulario y vista
+            document.getElementById('checkoutForm').reset();
+            document.getElementById('checkoutFormBody').classList.remove('hidden');
+            document.getElementById('checkoutSuccess').classList.remove('show');
+
+            document.getElementById('checkoutOverlay').classList.add('show');
+            document.body.style.overflow = 'hidden';
         }
 
-        function showCartToast(msg) {
-            const toast = document.getElementById('cartToast');
-            toast.textContent = msg;
-            toast.classList.add('show');
-            clearTimeout(toast._timeout);
-            toast._timeout = setTimeout(() => toast.classList.remove('show'), 2200);
+        function closeCheckout() {
+            document.getElementById('checkoutOverlay').classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        function closeCheckoutOnOverlay(e) {
+            if (e.target.id === 'checkoutOverlay') closeCheckout();
+        }
+
+        function formatCardNumber(input) {
+            let digits = input.value.replace(/\D/g, '').slice(0, 16);
+            input.value = digits.replace(/(.{4})/g, '$1 ').trim();
+        }
+
+        function formatExpiry(input) {
+            let digits = input.value.replace(/\D/g, '').slice(0, 4);
+            if (digits.length >= 3) {
+                input.value = digits.slice(0, 2) + '/' + digits.slice(2);
+            } else {
+                input.value = digits;
+            }
+        }
+
+        function handlePaymentSubmit(e) {
+            e.preventDefault();
+            if (!currentCheckoutProduct) return false;
+
+            document.getElementById('checkoutFormBody').classList.add('hidden');
+            const successBox = document.getElementById('checkoutSuccess');
+            document.getElementById('checkoutSuccessText').textContent =
+                `Tu pedido de "${currentCheckoutProduct.name}" por ${formatPrice(currentCheckoutProduct.price)} fue procesado correctamente (demo).`;
+            successBox.classList.add('show');
+
+            return false;
         }
 
         /* --- Countdown de ofertas --- */
