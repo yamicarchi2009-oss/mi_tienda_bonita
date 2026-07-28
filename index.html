@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiTienda</title>
+    <!-- Fuentes y Iconos -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- VARIABLES DE COLOR (Paleta Pastel basada en la imagen) --- */
+        :root {
+            --pink-light: #ffe6f2;
+            --purple-light: #e6ccff;
+            --mint-light: #e6ffff;
+            --blue-light: #d6f0ff;
+            --yellow-light: #fff5cc;
+            --pink-btn: #ffb3d9;
+            --text-main: #333333;
+            --text-gray: #666666;
+            --border-color: #cccccc;
+        }
+
+        /* --- ESTILOS GENERALES --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Quicksand', sans-serif;
+        }
+        html {
+            overflow-x: hidden;
+        }
+        body {
+            color: var(--text-main);
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+            width: 100%;
+        }
+        a { text-decoration: none; color: inherit; cursor: pointer; }
+        button { cursor: pointer; font-family: inherit; }
+        img { max-width: 100%; }
+
+        /* --- HEADER --- */
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: var(--pink-light);
+            border-bottom: 1px solid #f0cae1;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo-icon { font-size: 32px; }
+        .logo-text h1 { font-size: 24px; font-weight: 700; margin-bottom: 2px; }
+        .logo-text p { font-size: 14px; color: var(--text-gray); }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 5px 15px;
+            width: 400px;
+            max-width: 100%;
+            flex: 1 1 250px;
+        }
+        .search-bar input {
+            border: none;
+            outline: none;
+            width: 100%;
+            padding: 8px;
+            font-size: 15px;
+            min-width: 0;
+        }
+        .search-bar i { color: var(--text-gray); }
+
+        .user-account {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .user-account i { font-size: 24px; }
+
+        /* --- NAVEGACIÓN --- */
+        .nav-bar {
+            background-color: var(--purple-light);
+            padding: 12px 0;
+            border-bottom: 1px solid #d1b3ff;
+        }
+        .nav-bar ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            gap: 30px;
+            flex-wrap: wrap;
+            padding: 0 15px;
+        }
+        .nav-bar li {
+            position: relative;
+        }
+        .nav-bar a {
+            font-size: 16px;
+            font-weight: 500;
+            padding: 5px 10px;
+            transition: color 0.3s;
+        }
+        .nav-bar a:hover, .nav-bar a.active {
+            font-weight: 700;
+            color: #000;
+        }
+
+        /* --- CONTENEDOR DE PÁGINAS (SPA) --- */
+        .page-content { flex: 1; display: none; }
+        .page-content.active { display: block; }
+        .placeholder-page { padding: 100px 20px; text-align: center; background: var(--pink-light); min-height: 50vh;}
+
+        /* --- HERO SECTION --- */
+        .hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 60px 80px;
+            background: linear-gradient(135deg, var(--pink-light) 60%, var(--purple-light) 100%);
+            border-bottom: 1px solid #f0cae1;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .hero-left h2 { font-size: 38px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .hero-left p { font-size: 18px; margin-bottom: 25px; max-width: 400px; line-height: 1.5; }
+        .hero-left button {
+            background-color: var(--pink-btn);
+            border: 1px solid #ff99cc;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .hero-left button:hover { transform: scale(1.05); }
+
+        .hero-right {
+            background-color: #fff0f5;
+            border: 2px solid var(--pink-btn);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            width: 250px;
+            max-width: 100%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .hero-right i { font-size: 40px; margin-bottom: 15px; color: #ff66a3; }
+        .hero-right h3 { font-size: 20px; margin-bottom: 15px; }
+        .hero-right p { font-weight: 600; border-bottom: 2px solid var(--text-main); display: inline-block; padding-bottom: 2px;}
+
+        /* --- CATEGORÍAS (Reemplazo de Productos) --- */
+        .featured {
+            background-color: var(--mint-light);
+            padding: 40px 80px;
+            text-align: center;
+            border-bottom: 1px solid #cce6e6;
+        }
+        .featured h3 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            display: inline-block;
+            position: relative;
+        }
+        .carousel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .arrow {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+            color: var(--text-gray);
+        }
+        .category-card {
+            width: 180px;
+            height: 180px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e0e0e0;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .category-card:hover { transform: translateY(-5px); }
+        .category-card i { font-size: 50px; margin-bottom: 15px; color: #555; }
+        .category-card h4 { font-size: 18px; font-weight: 600; }
+        
+        /* Colores específicos de las tarjetas */
+        .card-ropa { background-color: var(--pink-light); }
+        .card-zapatos { background-color: var(--purple-light); }
+        .card-dispositivos { background-color: #e6e6ff; } /* Morado/Azul */
+        .card-accesorios { background-color: var(--yellow-light); }
+
+        /* --- BENEFICIOS --- */
+        .features {
+            display: flex;
+            justify-content: space-around;
+            padding: 25px 40px;
+            background-color: var(--blue-light);
+            border-bottom: 1px solid #b3e0ff;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .feature-item i {
+            font-size: 24px;
+            border: 1px solid var(--text-main);
+            border-radius: 50%;
+            padding: 10px;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* --- FOOTER --- */
+        .footer {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+        }
+        .footer-col {
+            padding: 30px 40px;
+        }
+        .footer-col h4 { margin-bottom: 15px; font-size: 18px; }
+        .footer-col p, .footer-col li { font-size: 14px; line-height: 1.6; margin-bottom: 8px;}
+        .footer-col ul { list-style: none; }
+        
+        .col-1 { background-color: var(--purple-light); }
+        .col-2 { background-color: var(--mint-light); }
+        .col-3 { background-color: var(--yellow-light); }
+        .col-4 { background-color: var(--pink-light); }
+        
+        .social-icons { margin-top: 15px; display: flex; gap: 10px; }
+        .social-icons i { font-size: 20px; cursor: pointer; border: 1px solid #000; border-radius: 5px; padding: 5px; width: 32px; text-align: center;}
+        
+        .contact-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px;}
+
+        .copyright {
+            background-color: var(--pink-btn);
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            border-top: 1px solid #ff99cc;
+        }
+
+        /* =====================================================
+           PÁGINAS INTERIORES (Productos, Categorías, Ofertas, Nosotros, Contacto)
+           ===================================================== */
+        .inner-page {
+            padding: 50px 80px;
+            background-color: #ffffff;
+        }
+        .inner-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .inner-header h2 {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+        .inner-header p {
+            color: var(--text-gray);
+            font-size: 16px;
+        }
+
+        /* --- Barra de filtros (Productos) --- */
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 35px;
+        }
+        .filter-chip {
+            background: white;
+            border: 2px solid var(--purple-light);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-gray);
+            transition: all 0.2s;
+        }
+        .filter-chip:hover { border-color: #c299ff; }
+        .filter-chip.active {
+            background-color: var(--purple-light);
+            color: var(--text-main);
+            border-color: #c299ff;
+        }
+
+        /* --- Grid de productos --- */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 25px;
+        }
+        .product-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: transform 0.25s, box-shadow 0.25s;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .product-img-wrap {
+            position: relative;
+            width: 100%;
+            height: 170px;
+            overflow: hidden;
+            background: #f5f5f5;
+        }
+        .product-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s;
+        }
+        .product-card:hover .product-img-wrap img { transform: scale(1.08); }
+        .badge-discount {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #ff4d88;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+        .product-info { padding: 15px 16px 18px; display: flex; flex-direction: column; flex: 1; }
+        .product-cat-tag {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .product-info h4 { font-size: 16px; margin-bottom: 6px; }
+        .product-price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .price-now { font-size: 18px; font-weight: 700; color: #ff3377; }
+        .price-old { font-size: 13px; color: #aaa; text-decoration: line-through; }
+        .add-cart-btn {
+            margin-top: auto;
+            background-color: var(--pink-btn);
+            border: 1px solid #ff99cc;
+            padding: 9px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: transform 0.15s, background 0.15s;
+        }
+        .add-cart-btn:hover { background-color: #ff99cc; }
+        .add-cart-btn:active { transform: scale(0.96); }
+        .add-cart-btn.added { background-color: #a8e6b8; border-color: #7fd996; }
+
+        /* --- Toast del carrito --- */
+        .cart-toast {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: #333;
+            color: white;
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 999;
+        }
+        .cart-toast.show { opacity: 1; transform: translateY(0); }
+
+        /* --- Badge de carrito en header --- */
+        .cart-badge {
+            background-color: #ff3377;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 50%;
+            min-width: 18px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            position: relative;
+            top: -10px;
+            left: -6px;
+        }
+
+        /* --- Categorías (página completa) --- */
+        .category-grid-full {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 25px;
+        }
+        .category-full-card {
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+            height: 190px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+        }
+        .category-full-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s;
+        }
+        .category-full-card:hover img { transform: scale(1.1); }
+        .category-full-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0));
+            display: flex;
+            align-items: flex-end;
+            padding: 16px;
+        }
+        .category-full-overlay h4 {
+            color: white;
+            font-size: 19px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .category-full-overlay span {
+            font-size: 12px;
+            font-weight: 500;
+            color: #eee;
+        }
+
+        /* --- Ofertas / countdown --- */
+        .offer-banner {
+            background: linear-gradient(135deg, var(--yellow-light), var(--pink-light));
+            border-radius: 16px;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+            border: 1px solid #ffe08a;
+        }
+        .offer-banner h3 { font-size: 24px; margin-bottom: 6px; }
+        .offer-banner p { color: var(--text-gray); font-size: 14px; }
+        .countdown {
+            display: flex;
+            gap: 12px;
+        }
+        .countdown-unit {
+            background: white;
+            border-radius: 10px;
+            padding: 10px 14px;
+            text-align: center;
+            min-width: 60px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+        }
+        .countdown-unit .num { font-size: 22px; font-weight: 700; }
+        .countdown-unit .lbl { font-size: 11px; color: var(--text-gray); text-transform: uppercase; }
+
+        /* --- Nosotros --- */
+        .about-section {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            margin-bottom: 45px;
+            flex-wrap: wrap;
+        }
+        .about-section.reverse { flex-direction: row-reverse; }
+        .about-img {
+            flex: 1 1 380px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        .about-img img { width: 100%; height: 320px; object-fit: cover; display: block; }
+        .about-text { flex: 1 1 380px; }
+        .about-text h3 { font-size: 24px; margin-bottom: 14px; }
+        .about-text p { color: var(--text-gray); line-height: 1.7; font-size: 15px; }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .value-card {
+            background: var(--mint-light);
+            border-radius: 14px;
+            padding: 24px;
+            text-align: center;
+            border: 1px solid #cce6e6;
+        }
+        .value-card i { font-size: 30px; color: #339999; margin-bottom: 12px; }
+        .value-card h4 { font-size: 16px; margin-bottom: 8px; }
+        .value-card p { font-size: 13px; color: var(--text-gray); line-height: 1.5; }
+
+        /* --- Contacto --- */
+        .contact-layout {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .contact-form-wrap {
+            flex: 1 1 380px;
+            background: var(--pink-light);
+            border-radius: 16px;
+            padding: 35px;
+            border: 1px solid #f0cae1;
+        }
+        .contact-form-wrap h3 { font-size: 20px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--pink-btn);
+        }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+        .contact-submit-btn {
+            background-color: var(--pink-btn);
+            border: 1px solid #ff99cc;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            width: 100%;
+        }
+        .contact-submit-btn:hover { background-color: #ff99cc; }
+        .form-success {
+            display: none;
+            background-color: #d9f7e3;
+            border: 1px solid #a8e6b8;
+            color: #1a6b3c;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+        .form-success.show { display: block; }
+
+        .contact-info-wrap {
+            flex: 1 1 300px;
+        }
+        .contact-map {
+            width: 100%;
+            height: 220px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .contact-map img { width: 100%; height: 100%; object-fit: cover; }
+        .contact-detail-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+        .contact-detail-item i {
+            background-color: var(--blue-light);
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .contact-detail-item h5 { font-size: 14px; margin-bottom: 3px; }
+        .contact-detail-item p { font-size: 13px; color: var(--text-gray); }
+
+        @media (max-width: 900px) {
+            .inner-page { padding: 40px 30px; }
+        }
+        @media (max-width: 600px) {
+            .inner-page { padding: 30px 18px; }
+            .inner-header h2 { font-size: 24px; }
+            .offer-banner { padding: 24px; justify-content: center; text-align: center; }
+            .countdown { justify-content: center; }
+            .about-section, .about-section.reverse { flex-direction: column; }
+            .about-img img { height: 220px; }
+        }
+
+        /* =====================================================
+           RESPONSIVE - TABLET (<= 900px)
+           ===================================================== */
+        @media (max-width: 900px) {
+            .hero {
+                padding: 40px 30px;
+            }
+            .featured, .placeholder-page {
+                padding: 40px 30px;
+            }
+            .footer {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* =====================================================
+           RESPONSIVE - MÓVIL (<= 600px)
+           ===================================================== */
+        @media (max-width: 600px) {
+            /* Header apilado */
+            .header-top {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 12px 20px;
+                gap: 12px;
+            }
+            .logo-container { justify-content: center; }
+            .logo-text h1 { font-size: 20px; }
+            .search-bar { width: 100%; }
+            .user-account { justify-content: center; }
+
+            /* Nav en menos espacio, permite salto de línea */
+            .nav-bar ul {
+                gap: 12px 18px;
+                padding: 0 10px;
+            }
+            .nav-bar a { font-size: 14px; padding: 4px 6px; }
+
+            /* Hero apilado y centrado */
+            .hero {
+                flex-direction: column;
+                padding: 35px 20px;
+                text-align: center;
+            }
+            .hero-left h2 {
+                font-size: 26px;
+                justify-content: center;
+            }
+            .hero-left p {
+                font-size: 16px;
+                max-width: 100%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .hero-right { width: 100%; }
+
+            /* Categorías: cuadrícula en vez de carrusel horizontal */
+            .featured { padding: 30px 20px; }
+            .carousel {
+                gap: 15px;
+            }
+            .arrow { display: none; } /* las flechas no tienen función real en móvil */
+            .category-card {
+                width: 130px;
+                height: 130px;
+            }
+            .category-card i { font-size: 36px; margin-bottom: 10px; }
+            .category-card h4 { font-size: 15px; }
+
+            /* Beneficios apilados */
+            .features {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 20px 25px;
+                gap: 18px;
+            }
+
+            /* Footer en una sola columna */
+            .footer {
+                grid-template-columns: 1fr;
+            }
+            .footer-col { padding: 25px 30px; }
+
+            .placeholder-page { padding: 60px 20px; }
+            .placeholder-page h2 { font-size: 22px; }
+        }
+
+        @media (max-width: 380px) {
+            .category-card {
+                width: 110px;
+                height: 110px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-top">
+            <div class="logo-container">
+                <i class="fa-solid fa-bag-shopping logo-icon"></i>
+                <div class="logo-text">
+                    <h1>MiTienda</h1>
+                    <p>Moda bella</p>
+                </div>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar productos...">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <div class="user-account">
+                <span style="position:relative;">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </span>
+                <i class="fa-regular fa-circle-user"></i>
+                <span>Mi cuenta</span>
+            </div>
+        </div>
+
+        <!-- NAVEGACIÓN -->
+        <nav class="nav-bar">
+            <ul>
+                <li><a class="nav-link active" onclick="showPage('inicio')">Inicio</a></li>
+                <li><a class="nav-link" onclick="showPage('productos')">Productos</a></li>
+                <li><a class="nav-link" onclick="showPage('categorias')">Categorías</a></li>
+                <li><a class="nav-link" onclick="showPage('ofertas')">Ofertas</a></li>
+                <li><a class="nav-link" onclick="showPage('nosotros')">Nosotros</a></li>
+                <li><a class="nav-link" onclick="showPage('contacto')">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- PÁGINA: INICIO (Principal) -->
+    <main id="inicio" class="page-content active">
+        <!-- HERO -->
+        <section class="hero">
+            <div class="hero-left">
+                <h2>Bienvenido a MiTienda <i class="fa-regular fa-heart"></i></h2>
+                <p>Encuentra productos de calidad<br>al mejor precio.</p>
+                <button>Comprar ahora</button>
+            </div>
+            <div class="hero-right">
+                <i class="fa-solid fa-tags"></i>
+                <h3>Ofertas<br>especiales</h3>
+                <p>¡Aprovecha hoy!</p>
+            </div>
+        </section>
+
+        <!-- CATEGORÍAS DESTACADAS (Reemplazo de los productos según solicitud) -->
+        <section class="featured">
+            <h3>Categorías destacadas</h3>
+            <div class="carousel">
+                <i class="fa-solid fa-angle-left arrow"></i>
+                
+                <div class="category-card card-ropa">
+                    <i class="fa-solid fa-shirt"></i>
+                    <h4>Ropa</h4>
+                </div>
+                
+                <div class="category-card card-zapatos">
+                    <i class="fa-solid fa-shoe-prints"></i>
+                    <h4>Zapatos</h4>
+                </div>
+                
+                <div class="category-card card-dispositivos">
+                    <i class="fa-solid fa-headphones-simple"></i>
+                    <h4>Dispositivos</h4>
+                </div>
+                
+                <div class="category-card card-accesorios">
+                    <i class="fa-solid fa-hat-cowboy"></i>
+                    <h4>Accesorios</h4>
+                </div>
+
+                <i class="fa-solid fa-angle-right arrow"></i>
+            </div>
+        </section>
+
+        <!-- BENEFICIOS -->
+        <section class="features">
+            <div class="feature-item">
+                <i class="fa-solid fa-truck-fast"></i>
+                <span>Envíos rápidos<br>a todo el país</span>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Pagos seguros<br>y protegidos</span>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-rotate-left"></i>
+                <span>Devoluciones<br>fáciles</span>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-headset"></i>
+                <span>Atención al cliente<br>24/7</span>
+            </div>
+        </section>
+    </main>
+
+    <!-- PÁGINAS SIMULADAS (Demás secciones) -->
+    <!-- PÁGINA: PRODUCTOS -->
+    <main id="productos" class="page-content inner-page">
+        <div class="inner-header">
+            <h2>Catálogo de Productos</h2>
+            <p>Explora nuestra selección completa. Usa los filtros para encontrar justo lo que buscas.</p>
+        </div>
+
+        <div class="filter-bar" id="filterBar">
+            <div class="filter-chip active" data-filter="todos">Todos</div>
+            <div class="filter-chip" data-filter="ropa">Ropa</div>
+            <div class="filter-chip" data-filter="zapatos">Zapatos</div>
+            <div class="filter-chip" data-filter="dispositivos">Dispositivos</div>
+            <div class="filter-chip" data-filter="accesorios">Accesorios</div>
+        </div>
+
+        <div class="product-grid" id="productGrid"></div>
+    </main>
+
+    <!-- PÁGINA: CATEGORÍAS -->
+    <main id="categorias" class="page-content inner-page">
+        <div class="inner-header">
+            <h2>Todas las Categorías</h2>
+            <p>Elige una categoría para ver los productos disponibles.</p>
+        </div>
+        <div class="category-grid-full">
+            <div class="category-full-card" onclick="goToFilteredProducts('ropa')">
+                <img src="https://loremflickr.com/500/400/clothing,rack" alt="Ropa">
+                <div class="category-full-overlay">
+                    <h4><i class="fa-solid fa-shirt"></i> Ropa <span>&nbsp;·&nbsp;24 productos</span></h4>
+                </div>
+            </div>
+            <div class="category-full-card" onclick="goToFilteredProducts('zapatos')">
+                <img src="https://loremflickr.com/500/400/sneakers,shoes" alt="Zapatos">
+                <div class="category-full-overlay">
+                    <h4><i class="fa-solid fa-shoe-prints"></i> Zapatos <span>&nbsp;·&nbsp;18 productos</span></h4>
+                </div>
+            </div>
+            <div class="category-full-card" onclick="goToFilteredProducts('dispositivos')">
+                <img src="https://loremflickr.com/500/400/headphones,gadget" alt="Dispositivos">
+                <div class="category-full-overlay">
+                    <h4><i class="fa-solid fa-headphones-simple"></i> Dispositivos <span>&nbsp;·&nbsp;15 productos</span></h4>
+                </div>
+            </div>
+            <div class="category-full-card" onclick="goToFilteredProducts('accesorios')">
+                <img src="https://loremflickr.com/500/400/accessories,watch" alt="Accesorios">
+                <div class="category-full-overlay">
+                    <h4><i class="fa-solid fa-hat-cowboy"></i> Accesorios <span>&nbsp;·&nbsp;12 productos</span></h4>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- PÁGINA: OFERTAS -->
+    <main id="ofertas" class="page-content inner-page">
+        <div class="inner-header">
+            <h2>Ofertas Especiales</h2>
+            <p>Descuentos por tiempo limitado. ¡No te quedes sin el tuyo!</p>
+        </div>
+
+        <div class="offer-banner">
+            <div>
+                <h3><i class="fa-solid fa-fire" style="color:#ff6600;"></i> Venta relámpago</h3>
+                <p>Hasta 40% de descuento en productos seleccionados</p>
+            </div>
+            <div class="countdown" id="countdown">
+                <div class="countdown-unit"><div class="num" id="cd-h">05</div><div class="lbl">Hrs</div></div>
+                <div class="countdown-unit"><div class="num" id="cd-m">59</div><div class="lbl">Min</div></div>
+                <div class="countdown-unit"><div class="num" id="cd-s">59</div><div class="lbl">Seg</div></div>
+            </div>
+        </div>
+
+        <div class="product-grid" id="offerGrid"></div>
+    </main>
+
+    <!-- PÁGINA: NOSOTROS -->
+    <main id="nosotros" class="page-content inner-page">
+        <div class="inner-header">
+            <h2>Sobre Nosotros</h2>
+            <p>Conoce la historia detrás de MiTienda</p>
+        </div>
+
+        <div class="about-section">
+            <div class="about-img">
+                <img src="https://loremflickr.com/700/500/small,shop,owner" alt="Nuestra tienda">
+            </div>
+            <div class="about-text">
+                <h3>Nuestra historia</h3>
+                <p>
+                    MiTienda nació en 2020 como un pequeño emprendimiento familiar con la idea de ofrecer
+                    productos de calidad a precios justos. Desde entonces hemos crecido hasta convertirnos
+                    en una tienda en línea de confianza para miles de clientes en todo el país, siempre
+                    manteniendo el trato cercano con el que empezamos.
+                </p>
+            </div>
+        </div>
+
+        <div class="about-section reverse">
+            <div class="about-img">
+                <img src="https://loremflickr.com/700/500/warehouse,packing" alt="Nuestro equipo">
+            </div>
+            <div class="about-text">
+                <h3>Nuestra misión</h3>
+                <p>
+                    Facilitar el acceso a productos de calidad mediante una experiencia de compra simple,
+                    rápida y segura, acompañando a cada cliente antes, durante y después de su compra con
+                    un servicio de atención cercano y humano.
+                </p>
+            </div>
+        </div>
+
+        <div class="values-grid">
+            <div class="value-card">
+                <i class="fa-solid fa-heart"></i>
+                <h4>Cercanía</h4>
+                <p>Tratamos a cada cliente como parte de la familia MiTienda.</p>
+            </div>
+            <div class="value-card">
+                <i class="fa-solid fa-award"></i>
+                <h4>Calidad</h4>
+                <p>Seleccionamos cuidadosamente cada producto de nuestro catálogo.</p>
+            </div>
+            <div class="value-card">
+                <i class="fa-solid fa-leaf"></i>
+                <h4>Responsabilidad</h4>
+                <p>Trabajamos con proveedores que comparten nuestros valores.</p>
+            </div>
+            <div class="value-card">
+                <i class="fa-solid fa-bolt"></i>
+                <h4>Rapidez</h4>
+                <p>Procesamos y enviamos los pedidos en tiempo récord.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- PÁGINA: CONTACTO -->
+    <main id="contacto" class="page-content inner-page">
+        <div class="inner-header">
+            <h2>Contáctanos</h2>
+            <p>¿Tienes dudas o comentarios? Escríbenos, con gusto te ayudamos.</p>
+        </div>
+
+        <div class="contact-layout">
+            <div class="contact-form-wrap">
+                <h3>Envíanos un mensaje</h3>
+                <form id="contactForm" onsubmit="return handleContactSubmit(event)">
+                    <div class="form-group">
+                        <label for="cf-name">Nombre completo</label>
+                        <input type="text" id="cf-name" required placeholder="Tu nombre">
+                    </div>
+                    <div class="form-group">
+                        <label for="cf-email">Correo electrónico</label>
+                        <input type="email" id="cf-email" required placeholder="tucorreo@ejemplo.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="cf-msg">Mensaje</label>
+                        <textarea id="cf-msg" required placeholder="Escribe tu mensaje aquí..."></textarea>
+                    </div>
+                    <button type="submit" class="contact-submit-btn">Enviar mensaje</button>
+                    <div class="form-success" id="formSuccess">
+                        <i class="fa-solid fa-circle-check"></i> ¡Gracias! Tu mensaje fue enviado. Te responderemos pronto.
+                    </div>
+                </form>
+            </div>
+
+            <div class="contact-info-wrap">
+                <div class="contact-map">
+                    <img src="https://loremflickr.com/700/450/city,map,street" alt="Ubicación">
+                </div>
+                <div class="contact-detail-item">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <div>
+                        <h5>Dirección</h5>
+                        <p>Av. Central y Calle 5, Guayaquil, Ecuador</p>
+                    </div>
+                </div>
+                <div class="contact-detail-item">
+                    <i class="fa-solid fa-phone"></i>
+                    <div>
+                        <h5>Teléfono</h5>
+                        <p>0999 123 456</p>
+                    </div>
+                </div>
+                <div class="contact-detail-item">
+                    <i class="fa-regular fa-envelope"></i>
+                    <div>
+                        <h5>Correo</h5>
+                        <p>bella@mitienda.com</p>
+                    </div>
+                </div>
+                <div class="contact-detail-item">
+                    <i class="fa-regular fa-clock"></i>
+                    <div>
+                        <h5>Horario de atención</h5>
+                        <p>Lunes a sábado, 9:00 am – 6:00 pm</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="cart-toast" id="cartToast"></div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer">
+            <div class="footer-col col-1">
+                <h4>MiTienda</h4>
+                <p>Tu tienda en línea de confianza.<br>Calidad, variedad y buenos precios.</p>
+                <div class="social-icons">
+                    <i class="fa-brands fa-facebook-f"></i>
+                    <i class="fa-brands fa-instagram"></i>
+                    <i class="fa-brands fa-whatsapp"></i>
+                </div>
+            </div>
+            <div class="footer-col col-2">
+                <h4>Enlaces rápidos</h4>
+                <ul>
+                    <li>• Inicio</li>
+                    <li>• Productos</li>
+                    <li>• Categorías</li>
+                    <li>• Ofertas</li>
+                    <li>• Contacto</li>
+                </ul>
+            </div>
+            <div class="footer-col col-3">
+                <h4>Ayuda</h4>
+                <ul>
+                    <li>• Preguntas frecuentes</li>
+                    <li>• Envíos</li>
+                    <li>• Devoluciones</li>
+                    <li>• Términos y condiciones</li>
+                </ul>
+            </div>
+            <div class="footer-col col-4">
+                <h4>Contacto</h4>
+                <div class="contact-item">
+                    <i class="fa-regular fa-envelope"></i> bella@mitienda.com
+                </div>
+                <div class="contact-item">
+                    <i class="fa-solid fa-phone"></i> 0999 123 456
+                </div>
+                <div class="contact-item">
+                    <i class="fa-solid fa-location-dot"></i> Av. Central y Calle 5
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2026 MiTienda - Todos los derechos reservados
+        </div>
+    </footer>
+
+    <!-- SCRIPT PARA NAVEGACIÓN SPA (Single Page Application) -->
+    <script>
+        function showPage(pageId, evt) {
+            // Ocultar todas las páginas
+            const pages = document.querySelectorAll('.page-content');
+            pages.forEach(page => page.classList.remove('active'));
+
+            // Quitar clase 'active' de todos los links
+            const links = document.querySelectorAll('.nav-link');
+            links.forEach(link => link.classList.remove('active'));
+
+            // Mostrar la página seleccionada
+            document.getElementById(pageId).classList.add('active');
+
+            // Añadir clase 'active' al link clickeado (soporta llamada programática sin evento)
+            const ev = evt || window.event;
+            if (ev && ev.target) {
+                ev.target.classList.add('active');
+            } else {
+                const matchingLink = document.querySelector(`.nav-link[onclick*="'${pageId}'"]`);
+                if (matchingLink) matchingLink.classList.add('active');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* ==========================================================
+           BASE DE DATOS DE PRODUCTOS (demo)
+           ========================================================== */
+        const PRODUCTS = [
+            { id: 1, name: 'Camisa oxford clásica', cat: 'ropa', catLabel: 'Ropa', price: 24.99, oldPrice: null, img: 'https://loremflickr.com/400/300/shirt,fashion?lock=1' },
+            { id: 2, name: 'Chaqueta de mezclilla', cat: 'ropa', catLabel: 'Ropa', price: 39.90, oldPrice: 54.90, img: 'https://loremflickr.com/400/300/denim,jacket?lock=2' },
+            { id: 3, name: 'Vestido casual verano', cat: 'ropa', catLabel: 'Ropa', price: 29.50, oldPrice: null, img: 'https://loremflickr.com/400/300/summer,dress?lock=3' },
+            { id: 4, name: 'Suéter tejido', cat: 'ropa', catLabel: 'Ropa', price: 22.00, oldPrice: 30.00, img: 'https://loremflickr.com/400/300/sweater,knit?lock=4' },
+            { id: 5, name: 'Zapatillas urbanas', cat: 'zapatos', catLabel: 'Zapatos', price: 45.00, oldPrice: null, img: 'https://loremflickr.com/400/300/sneakers,shoes?lock=5' },
+            { id: 6, name: 'Botines de cuero', cat: 'zapatos', catLabel: 'Zapatos', price: 58.90, oldPrice: 72.00, img: 'https://loremflickr.com/400/300/leather,boots?lock=6' },
+            { id: 7, name: 'Sandalias de verano', cat: 'zapatos', catLabel: 'Zapatos', price: 18.50, oldPrice: null, img: 'https://loremflickr.com/400/300/sandals,summer?lock=7' },
+            { id: 8, name: 'Tenis para correr', cat: 'zapatos', catLabel: 'Zapatos', price: 52.00, oldPrice: null, img: 'https://loremflickr.com/400/300/running,shoes?lock=8' },
+            { id: 9, name: 'Audífonos inalámbricos', cat: 'dispositivos', catLabel: 'Dispositivos', price: 34.99, oldPrice: 49.99, img: 'https://loremflickr.com/400/300/wireless,headphones?lock=9' },
+            { id: 10, name: 'Reloj inteligente', cat: 'dispositivos', catLabel: 'Dispositivos', price: 65.00, oldPrice: null, img: 'https://loremflickr.com/400/300/smartwatch?lock=10' },
+            { id: 11, name: 'Parlante portátil', cat: 'dispositivos', catLabel: 'Dispositivos', price: 27.90, oldPrice: null, img: 'https://loremflickr.com/400/300/bluetooth,speaker?lock=11' },
+            { id: 12, name: 'Cargador rápido USB-C', cat: 'dispositivos', catLabel: 'Dispositivos', price: 14.50, oldPrice: 19.90, img: 'https://loremflickr.com/400/300/charger,cable?lock=12' },
+            { id: 13, name: 'Gorra bordada', cat: 'accesorios', catLabel: 'Accesorios', price: 12.00, oldPrice: null, img: 'https://loremflickr.com/400/300/cap,hat?lock=13' },
+            { id: 14, name: 'Bolso de mano', cat: 'accesorios', catLabel: 'Accesorios', price: 33.00, oldPrice: 42.00, img: 'https://loremflickr.com/400/300/handbag,purse?lock=14' },
+            { id: 15, name: 'Lentes de sol', cat: 'accesorios', catLabel: 'Accesorios', price: 16.90, oldPrice: null, img: 'https://loremflickr.com/400/300/sunglasses?lock=15' },
+            { id: 16, name: 'Cinturón de cuero', cat: 'accesorios', catLabel: 'Accesorios', price: 19.90, oldPrice: null, img: 'https://loremflickr.com/400/300/leather,belt?lock=16' },
+        ];
+
+        let cartCount = 0;
+
+        function formatPrice(n) {
+            return '$' + n.toFixed(2);
+        }
+
+        function buildProductCard(p) {
+            const discountBadge = p.oldPrice
+                ? `<div class="badge-discount">-${Math.round(100 - (p.price / p.oldPrice) * 100)}%</div>`
+                : '';
+            const oldPriceHtml = p.oldPrice ? `<span class="price-old">${formatPrice(p.oldPrice)}</span>` : '';
+            return `
+                <div class="product-card" data-cat="${p.cat}">
+                    <div class="product-img-wrap">
+                        <img src="${p.img}" alt="${p.name}" loading="lazy">
+                        ${discountBadge}
+                    </div>
+                    <div class="product-info">
+                        <div class="product-cat-tag">${p.catLabel}</div>
+                        <h4>${p.name}</h4>
+                        <div class="product-price-row">
+                            <span class="price-now">${formatPrice(p.price)}</span>
+                            ${oldPriceHtml}
+                        </div>
+                        <button class="add-cart-btn" onclick="addToCart(${p.id}, this)">
+                            <i class="fa-solid fa-cart-plus"></i> Agregar al carrito
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProductGrid() {
+            const grid = document.getElementById('productGrid');
+            if (grid) grid.innerHTML = PRODUCTS.map(buildProductCard).join('');
+        }
+
+        function renderOfferGrid() {
+            const grid = document.getElementById('offerGrid');
+            if (grid) {
+                const onOffer = PRODUCTS.filter(p => p.oldPrice);
+                grid.innerHTML = onOffer.map(buildProductCard).join('');
+            }
+        }
+
+        function filterProducts(filter) {
+            const cards = document.querySelectorAll('#productGrid .product-card');
+            cards.forEach(card => {
+                const match = filter === 'todos' || card.dataset.cat === filter;
+                card.style.display = match ? 'flex' : 'none';
+            });
+        }
+
+        function goToFilteredProducts(cat) {
+            showPage('productos');
+            setTimeout(() => {
+                document.querySelectorAll('.filter-chip').forEach(chip => {
+                    chip.classList.toggle('active', chip.dataset.filter === cat);
+                });
+                filterProducts(cat);
+            }, 0);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProductGrid();
+            renderOfferGrid();
+
+            // Filtros de categoría en Productos
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    filterProducts(chip.dataset.filter);
+                });
+            });
+
+            // Buscador del header: filtra productos por nombre y navega a Productos
+            const searchInput = document.querySelector('.search-bar input');
+            if (searchInput) {
+                searchInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        const term = searchInput.value.trim().toLowerCase();
+                        showPage('productos');
+                        setTimeout(() => {
+                            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                            document.querySelector('.filter-chip[data-filter="todos"]').classList.add('active');
+                            const cards = document.querySelectorAll('#productGrid .product-card');
+                            cards.forEach(card => {
+                                const name = card.querySelector('h4').textContent.toLowerCase();
+                                card.style.display = (term === '' || name.includes(term)) ? 'flex' : 'none';
+                            });
+                        }, 0);
+                    }
+                });
+            }
+
+            startCountdown();
+        });
+
+        /* --- Carrito --- */
+        function addToCart(id, btnEl) {
+            cartCount++;
+            document.getElementById('cartBadge').textContent = cartCount;
+
+            const original = btnEl.innerHTML;
+            btnEl.innerHTML = '<i class="fa-solid fa-check"></i> Agregado';
+            btnEl.classList.add('added');
+            setTimeout(() => {
+                btnEl.innerHTML = original;
+                btnEl.classList.remove('added');
+            }, 1200);
+
+            const product = PRODUCTS.find(p => p.id === id);
+            showCartToast(`"${product.name}" se agregó al carrito`);
+        }
+
+        function showCartToast(msg) {
+            const toast = document.getElementById('cartToast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => toast.classList.remove('show'), 2200);
+        }
+
+        /* --- Countdown de ofertas --- */
+        function startCountdown() {
+            let totalSeconds = 5 * 3600 + 59 * 60 + 59;
+            const hEl = document.getElementById('cd-h');
+            const mEl = document.getElementById('cd-m');
+            const sEl = document.getElementById('cd-s');
+            if (!hEl) return;
+
+            setInterval(() => {
+                if (totalSeconds <= 0) {
+                    totalSeconds = 5 * 3600 + 59 * 60 + 59; // reinicia el demo
+                } else {
+                    totalSeconds--;
+                }
+                const h = Math.floor(totalSeconds / 3600);
+                const m = Math.floor((totalSeconds % 3600) / 60);
+                const s = totalSeconds % 60;
+                hEl.textContent = String(h).padStart(2, '0');
+                mEl.textContent = String(m).padStart(2, '0');
+                sEl.textContent = String(s).padStart(2, '0');
+            }, 1000);
+        }
+
+        /* --- Formulario de contacto --- */
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            const successBox = document.getElementById('formSuccess');
+            successBox.classList.add('show');
+            document.getElementById('contactForm').reset();
+            setTimeout(() => successBox.classList.remove('show'), 4000);
+            return false;
+        }
+    </script>
+</body>
+</html>
