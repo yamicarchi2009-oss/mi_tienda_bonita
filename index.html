@@ -761,10 +761,6 @@
                 <i class="fa-solid fa-magnifying-glass"></i>
             </div>
             <div class="user-account">
-                <span style="position:relative;">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    <span class="cart-badge" id="cartBadge">0</span>
-                </span>
                 <i class="fa-regular fa-circle-user"></i>
                 <span>Mi cuenta</span>
             </div>
@@ -805,22 +801,22 @@
             <div class="carousel">
                 <i class="fa-solid fa-angle-left arrow"></i>
                 
-                <div class="category-card card-ropa">
+                <div class="category-card card-ropa" onclick="goToFilteredProducts('ropa')">
                     <i class="fa-solid fa-shirt"></i>
                     <h4>Ropa</h4>
                 </div>
                 
-                <div class="category-card card-zapatos">
+                <div class="category-card card-zapatos" onclick="goToFilteredProducts('zapatos')">
                     <i class="fa-solid fa-shoe-prints"></i>
                     <h4>Zapatos</h4>
                 </div>
                 
-                <div class="category-card card-dispositivos">
+                <div class="category-card card-dispositivos" onclick="goToFilteredProducts('dispositivos')">
                     <i class="fa-solid fa-headphones-simple"></i>
                     <h4>Dispositivos</h4>
                 </div>
                 
-                <div class="category-card card-accesorios">
+                <div class="category-card card-accesorios" onclick="goToFilteredProducts('accesorios')">
                     <i class="fa-solid fa-hat-cowboy"></i>
                     <h4>Accesorios</h4>
                 </div>
@@ -1252,7 +1248,8 @@
         /* --- Carrito --- */
         function addToCart(id, btnEl) {
             cartCount++;
-            document.getElementById('cartBadge').textContent = cartCount;
+            const badge = document.getElementById('cartBadge');
+            if (badge) badge.textContent = cartCount;
 
             const original = btnEl.innerHTML;
             btnEl.innerHTML = '<i class="fa-solid fa-check"></i> Agregado';
